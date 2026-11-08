@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "status": "ready",
+  "verification": "mock-only",
+  "releaseEligible": true,
+  "maintainer": "jannikco",
+  "license": "MIT",
+  "sourceRevision": "d494b3cda1d149bff90ac5ac8d152a3ebaa318b06438b940b0ece0eb7fe6f586",
+  "evidence": [
+    "Source-backed provider setup metadata",
+    "Offline configuration and MCP protocol tests"
+  ],
+  "provenance": [
+    "https://api.hubspot.com/public/api/spec/v2/specs/release/75278/version/2026-03"
+  ],
+  "id": "hubspot-mcp",
+  "kind": "mcp-setup",
+  "product": "pipmcp",
+  "title": "HubSpot MCP setup and connection checker",
+  "description": "Generate HubSpot MCP client configuration, inspect available tools and validate hosted endpoint access through PipMCP.",
+  "operationIds": [],
+  "appSlug": "hubspot",
+  "appName": "HubSpot",
+  "providerDocs": "https://api.hubspot.com/public/api/spec/v2/specs/release/75278/version/2026-03",
+  "providerWebsite": "https://www.hubspot.com/",
+  "authentication": {
+    "type": "bearer",
+    "requiredCredentialFields": [
+      "token"
+    ],
+    "requiredHeaderNames": [],
+    "helpUrl": "https://developers.hubspot.com/docs/apps/legacy-apps/private-apps/overview",
+    "tenantRequired": false,
+    "accountParameterNames": []
+  },
+  "attributionSlug": "github-hubspot-mcp"
+}
