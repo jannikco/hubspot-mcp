@@ -12,7 +12,7 @@
   "maintainer": "jannikco",
   "license": "MIT",
   "attributionSlug": "github-hubspot-mcp",
-  "sourceRevision": "eedf568aa35a5466eb48a08663aedfd4907a24bbbeadcf9a3f8d1f72e218baf1",
+  "sourceRevision": "4591a61a10aef087508aff5d4404212919660651d4f167355fe2135b6b1a191c",
   "qualityVersion": 2,
   "artifactType": "connector",
   "evidence": [
@@ -30,7 +30,7 @@
   "appName": "HubSpot",
   "connectorId": "hubspot",
   "executionAuthority": "pipmcp-gateway",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "agentReady": true,
   "capabilityEvidence": {
     "local": {

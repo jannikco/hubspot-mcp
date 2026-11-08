@@ -1,0 +1,55 @@
+{
+  "id": "stalled-deal-review",
+  "repositoryId": "hubspot-mcp",
+  "product": "pipmcp",
+  "connectorId": "hubspot",
+  "title": "Find stalled HubSpot deals",
+  "promise": "Prepare a follow-up review from open deals with no recent activity.",
+  "sourceRevision": "4591a61a10aef087508aff5d4404212919660651d4f167355fe2135b6b1a191c",
+  "credential": "PIPMCP_API_KEY",
+  "transport": "pipmcp-gateway",
+  "sourceRefs": [
+    "https://api.hubspot.com/public/api/spec/v2/specs/release/75278/version/2026-03"
+  ],
+  "readTask": {
+    "intent": "Prepare a follow-up review from open deals with no recent activity.",
+    "requiredCapability": "Read-only authorized account data; discover actual names and schemas first"
+  },
+  "synthetic": {
+    "strategy": "score",
+    "field": "daysSinceActivity",
+    "value": 14,
+    "records": [
+      {
+        "id": "synthetic-deal-a",
+        "stage": "open",
+        "amount": 4500,
+        "lastActivityAt": "2026-10-10T00:00:00Z"
+      },
+      {
+        "id": "synthetic-deal-b",
+        "stage": "open",
+        "amount": 1200,
+        "lastActivityAt": "2026-11-07T00:00:00Z"
+      }
+    ],
+    "input": {
+      "limit": 10
+    },
+    "normalization": "Invented normalized review fields demonstrate task logic; live provider schemas and field mappings must be reviewed separately.",
+    "expectedReviewCount": 1,
+    "asOf": "2026-11-08T00:00:00Z",
+    "normalize": {
+      "type": "elapsed-days",
+      "sourceField": "lastActivityAt"
+    }
+  },
+  "livePolicy": {
+    "default": "preflight-only",
+    "explicitReadSelectionRequired": true,
+    "providerWritesAllowed": false,
+    "sandboxWritesRequireSeparateApproval": true
+  },
+  "baseSourceRevision": "eedf568aa35a5466eb48a08663aedfd4907a24bbbeadcf9a3f8d1f72e218baf1",
+  "releaseVersion": "1.1.0"
+}
