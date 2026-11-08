@@ -5,20 +5,23 @@
   "releaseEligible": true,
   "maintainer": "jannikco",
   "license": "MIT",
-  "sourceRevision": "d494b3cda1d149bff90ac5ac8d152a3ebaa318b06438b940b0ece0eb7fe6f586",
+  "sourceRevision": "ac2caa67b42ae085dbcec10cae9b2836d23e9001550b2fd249c0c14a0d5a1119",
   "evidence": [
-    "Source-backed provider setup metadata",
-    "Offline configuration and MCP protocol tests"
+    "Actual tools/call and direct-provider request contract tests"
   ],
   "provenance": [
     "https://api.hubspot.com/public/api/spec/v2/specs/release/75278/version/2026-03"
   ],
   "id": "hubspot-mcp",
-  "kind": "mcp-setup",
+  "kind": "provider-connector",
   "product": "pipmcp",
-  "title": "HubSpot MCP setup and connection checker",
-  "description": "Generate HubSpot MCP client configuration, inspect available tools and validate hosted endpoint access through PipMCP.",
-  "operationIds": [],
+  "title": "HubSpot MCP server",
+  "description": "Find CRM contacts and inspect their properties before creating a new contact in the same HubSpot account.",
+  "operationIds": [
+    "hubspot_list_objects",
+    "hubspot_get_object",
+    "hubspot_create_object"
+  ],
   "appSlug": "hubspot",
   "appName": "HubSpot",
   "providerDocs": "https://api.hubspot.com/public/api/spec/v2/specs/release/75278/version/2026-03",
@@ -28,12 +31,342 @@
     "requiredCredentialFields": [
       "token"
     ],
+    "settings": {},
     "requiredHeaderNames": [],
     "helpUrl": "https://developers.hubspot.com/docs/apps/legacy-apps/private-apps/overview",
     "tenantRequired": false,
     "accountParameterNames": []
   },
   "attributionSlug": "github-hubspot-mcp",
+  "artifactType": "connector",
+  "qualityVersion": 2,
+  "connectorId": "hubspot",
+  "connector": {
+    "id": "hubspot",
+    "name": "HubSpot",
+    "version": "0.1.0",
+    "baseUrl": "https://api.hubapi.com",
+    "auth": {
+      "type": "bearer",
+      "env": "HUBSPOT_ACCESS_TOKEN"
+    },
+    "tools": [
+      {
+        "name": "hubspot_list_objects",
+        "description": "hubspot list objects",
+        "method": "GET",
+        "path": "/crm/objects/2026-03/{objectType}",
+        "readOnly": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "objectType": {
+              "type": "string"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            },
+            "after": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "objectType"
+          ],
+          "additionalProperties": false
+        },
+        "bindings": {
+          "path": [
+            "objectType"
+          ],
+          "query": {
+            "limit": "limit",
+            "after": "after"
+          },
+          "body": {}
+        },
+        "approvalRequired": false,
+        "provenance": [
+          "https://api.hubspot.com/public/api/spec/v2/specs/release/75278/version/2026-03"
+        ],
+        "evidence": {
+          "state": "documented",
+          "providerLiveValidation": "not-run"
+        },
+        "sampleArguments": {
+          "objectType": "contacts",
+          "limit": 5
+        }
+      },
+      {
+        "name": "hubspot_get_object",
+        "description": "hubspot get object",
+        "method": "GET",
+        "path": "/crm/objects/2026-03/{objectType}/{objectId}",
+        "readOnly": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "objectType": {
+              "type": "string"
+            },
+            "objectId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "objectType",
+            "objectId"
+          ],
+          "additionalProperties": false
+        },
+        "bindings": {
+          "path": [
+            "objectType",
+            "objectId"
+          ],
+          "query": {},
+          "body": {}
+        },
+        "approvalRequired": false,
+        "provenance": [
+          "https://api.hubspot.com/public/api/spec/v2/specs/release/75278/version/2026-03"
+        ],
+        "evidence": {
+          "state": "documented",
+          "providerLiveValidation": "not-run"
+        },
+        "sampleArguments": {
+          "objectType": "contacts",
+          "objectId": "REPLACE_WITH_AUTHORIZED_CONTACT_ID"
+        }
+      },
+      {
+        "name": "hubspot_create_object",
+        "description": "hubspot create object",
+        "method": "POST",
+        "path": "/crm/objects/2026-03/{objectType}",
+        "readOnly": false,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "objectType": {
+              "type": "string"
+            },
+            "properties": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "required": [
+            "objectType",
+            "properties"
+          ],
+          "additionalProperties": false
+        },
+        "bindings": {
+          "path": [
+            "objectType"
+          ],
+          "query": {},
+          "body": {
+            "properties": "properties"
+          }
+        },
+        "approvalRequired": true,
+        "body": {
+          "associations": []
+        },
+        "provenance": [
+          "https://api.hubspot.com/public/api/spec/v2/specs/release/75278/version/2026-03"
+        ],
+        "evidence": {
+          "state": "documented",
+          "providerLiveValidation": "not-run"
+        },
+        "sampleArguments": {
+          "objectType": "contacts",
+          "properties": {
+            "email": "sandbox@example.com",
+            "firstname": "Sandbox",
+            "lastname": "Example"
+          }
+        }
+      }
+    ],
+    "workflow": {
+      "name": "hubspot-workflow",
+      "description": "Find CRM contacts and inspect their properties before creating a new contact in the same HubSpot account.",
+      "steps": [
+        "hubspot_list_objects",
+        "hubspot_get_object",
+        "hubspot_create_object"
+      ]
+    },
+    "provenance": [
+      "https://api.hubspot.com/public/api/spec/v2/specs/release/75278/version/2026-03"
+    ],
+    "sourceEvidence": {
+      "state": "documented",
+      "providerLiveValidation": "not-run",
+      "checkedAt": "2026-11-08",
+      "operationCount": 3,
+      "kind": "official-openapi",
+      "sha256": "57e5da77cf4f280c00d165089e1e3a42cd0dc96f53fef2a2d66485a8dc5bce31"
+    },
+    "setup": {
+      "requiresPipMcpAccount": false,
+      "credentialsHelpUrl": "https://developers.hubspot.com/docs/apps/legacy-apps/private-apps/overview",
+      "instructions": "In HubSpot, go to Development → Legacy apps, click Create legacy app and choose Private. Give it the CRM scopes you need (e.g. contacts, companies, deals read/write), create it, then open the Auth tab and click Show token → Copy."
+    },
+    "sampleWarning": "Example IDs are placeholders, not known provider records. Replace them with authorized sandbox/account IDs. Contact emails, file URLs and recipient numbers must be replaced with data you are authorized to use. Examples never authorize a write.",
+    "repoId": "hubspot-mcp",
+    "appSlug": "hubspot",
+    "product": "pipmcp",
+    "artifactType": "connector",
+    "sourceRevision": "ac2caa67b42ae085dbcec10cae9b2836d23e9001550b2fd249c0c14a0d5a1119",
+    "capabilityEvidence": {
+      "local": {
+        "level": "Tested",
+        "operations": [
+          {
+            "name": "hubspot_list_objects",
+            "level": "Tested",
+            "evidenceRefs": [
+              "Provider request/stdio contract tests"
+            ],
+            "method": "contract-fixture"
+          },
+          {
+            "name": "hubspot_get_object",
+            "level": "Tested",
+            "evidenceRefs": [
+              "Provider request/stdio contract tests"
+            ],
+            "method": "contract-fixture"
+          },
+          {
+            "name": "hubspot_create_object",
+            "level": "Tested",
+            "evidenceRefs": [
+              "Provider request/stdio contract tests"
+            ],
+            "method": "contract-fixture"
+          }
+        ],
+        "evidenceRefs": [
+          "Provider request/stdio contract tests"
+        ],
+        "mode": "local"
+      },
+      "managed": {
+        "level": "Documented",
+        "operations": [
+          {
+            "name": "hubspot_list_objects",
+            "level": "Documented",
+            "evidenceRefs": [],
+            "method": "documentation"
+          },
+          {
+            "name": "hubspot_get_object",
+            "level": "Documented",
+            "evidenceRefs": [],
+            "method": "documentation"
+          },
+          {
+            "name": "hubspot_create_object",
+            "level": "Documented",
+            "evidenceRefs": [],
+            "method": "documentation"
+          }
+        ],
+        "evidenceRefs": [],
+        "mode": "managed"
+      }
+    },
+    "authentication": {
+      "type": "bearer",
+      "requiredCredentialFields": [
+        "token"
+      ],
+      "settings": {},
+      "requiredHeaderNames": [],
+      "helpUrl": "https://developers.hubspot.com/docs/apps/legacy-apps/private-apps/overview",
+      "tenantRequired": false,
+      "accountParameterNames": []
+    },
+    "managedAvailability": {
+      "status": "listed",
+      "checkedAt": "2026-11-08T12:29:10.433747+00:00"
+    }
+  },
+  "capabilityEvidence": {
+    "local": {
+      "level": "Tested",
+      "operations": [
+        {
+          "name": "hubspot_list_objects",
+          "level": "Tested",
+          "evidenceRefs": [
+            "Provider request/stdio contract tests"
+          ],
+          "method": "contract-fixture"
+        },
+        {
+          "name": "hubspot_get_object",
+          "level": "Tested",
+          "evidenceRefs": [
+            "Provider request/stdio contract tests"
+          ],
+          "method": "contract-fixture"
+        },
+        {
+          "name": "hubspot_create_object",
+          "level": "Tested",
+          "evidenceRefs": [
+            "Provider request/stdio contract tests"
+          ],
+          "method": "contract-fixture"
+        }
+      ],
+      "evidenceRefs": [
+        "Provider request/stdio contract tests"
+      ],
+      "mode": "local"
+    },
+    "managed": {
+      "level": "Documented",
+      "operations": [
+        {
+          "name": "hubspot_list_objects",
+          "level": "Documented",
+          "evidenceRefs": [],
+          "method": "documentation"
+        },
+        {
+          "name": "hubspot_get_object",
+          "level": "Documented",
+          "evidenceRefs": [],
+          "method": "documentation"
+        },
+        {
+          "name": "hubspot_create_object",
+          "level": "Documented",
+          "evidenceRefs": [],
+          "method": "documentation"
+        }
+      ],
+      "evidenceRefs": [],
+      "mode": "managed"
+    }
+  },
+  "utility": {
+    "problem": "Find CRM contacts and inspect their properties before creating a new contact in the same HubSpot account.",
+    "output": "Actual provider API results through local MCP tools"
+  },
   "factory": "leadadapter-pipmcp",
-  "generatorVersion": 1
+  "generatorVersion": 2
 }

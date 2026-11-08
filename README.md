@@ -1,49 +1,69 @@
-# HubSpot MCP setup and connection checker
+# HubSpot MCP server
 
-Generate HubSpot MCP client configuration, inspect available tools and validate hosted endpoint access through PipMCP.
+Find CRM contacts and inspect their properties before creating a new contact in the same HubSpot account.
 
-Maintainer: jannikco · License: MIT · Verification: **mock-only**
+A direct-provider MCP server with useful local execution. No PipMCP account is required for local use. Provider API access and any provider charges are your responsibility.
 
 ## Quick start
 
-Requires Node.js 22 or later.
+Requires Node.js22+. Clone this repository, then run:
 
 ```sh
-npm ci
+npm ci --ignore-scripts
 npm test
 npm start
 ```
 
-The default example runs locally without credentials and makes no external changes. Verification status describes recorded evidence; local configuration tests do not establish that provider authentication or execution works.
+The default command inspects the tools offline. Configure your own credentials in your environment:
 
-## Connect hubspot
+- `HUBSPOT_ACCESS_TOKEN`
 
-[Create or sign in to PipMCP](https://pipmcp.com/register?app=hubspot&utm_source=github&utm_campaign=github-hubspot-mcp) and select the integration. Connect your authorized provider account and copy its hosted MCP endpoint. Set PIPMCP_ENDPOINT and, if required, PIPMCP_TOKEN in your environment. Run npm start to produce client configuration; run npm start -- --live for a read-only connection check. Provider app presence is catalog evidence, not live verification.
 
-## Managed service
 
-[Continue with PipMCP](https://pipmcp.com/register?app=hubspot&utm_source=github&utm_campaign=github-hubspot-mcp). This repository is maintained by the integration team and does not imply endorsement by LinkedIn or other providers.
+Credential help: https://developers.hubspot.com/docs/apps/legacy-apps/private-apps/overview
 
-## Provenance and support
+## Execute a real read
 
-Source revision: d494b3cda1d149bff90ac5ac8d152a3ebaa318b06438b940b0ece0eb7fe6f586. The complete manifest is in integration.json; SHA256SUMS covers the reviewed artifact. Open a repository issue without credentials or personal data. See SECURITY.md for sensitive reports. No telemetry is sent by this code; signup links include explicit campaign parameters.
+Replace example record IDs with records you are authorized to access.
 
-## Provider setup inventory
-
-Run `npm start -- --setup` to inspect this app's recorded authentication requirements and setup links offline. Credentials are entered in PipMCP; this repository lists required field names only.
-
-```json
-{
-  "type": "bearer",
-  "requiredCredentialFields": [
-    "token"
-  ],
-  "requiredHeaderNames": [],
-  "helpUrl": "https://developers.hubspot.com/docs/apps/legacy-apps/private-apps/overview",
-  "tenantRequired": false,
-  "accountParameterNames": []
-}
+```sh
+npm start -- --call hubspot_list_objects '{"objectType":"contacts","limit":5}'
 ```
 
-Provider documentation: https://api.hubspot.com/public/api/spec/v2/specs/release/75278/version/2026-03
-Provider website: https://www.hubspot.com/
+## Use with an MCP client
+
+Launch `node /absolute/path/hubspot-mcp/server.mjs` using stdio transport; pass credentials through the client environment. Stdout is reserved for JSON-RPC.
+
+## Tools
+
+| Tool | Effect | Purpose |
+| --- | --- | --- |
+| hubspot_list_objects | Read | hubspot list objects |
+| hubspot_get_object | Read | hubspot get object |
+| hubspot_create_object | Explicit approval required | hubspot create object |
+
+## Concrete workflow
+
+Find CRM contacts and inspect their properties before creating a new contact in the same HubSpot account.
+
+1. hubspot_list_objects
+2. hubspot_get_object
+3. hubspot_create_object
+
+## Optional writes
+
+Writes are disabled by default. Set CONNECTOR_ALLOW_WRITES=true and supply `_approval: {approved:true,idempotencyKey:"unique-request-id"}` on the specific call. Do not reuse a key for a different request. Uncertain outcomes are never automatically replayed; inspect the provider before another attempt.
+
+## Capability evidence
+
+Local: **Tested — HTTP fixtures and real stdio tools/call**. Managed: **Documented**. Provider authentication and live operations have not been established by these fixture tests. Evidence applies per operation and execution mode; setup discovery does not imply provider execution.
+
+## Managed production
+
+[Activate with PipMCP](https://pipmcp.com/github/start?app=hubspot&integration=hubspot-mcp&utm_source=github&utm_campaign=github-hubspot-mcp&utm_content=readme) when you want the hosted service.  Local credentials are not uploaded by this code. Review provider permissions in the managed onboarding. [Directory and related projects](https://jannikco.github.io/pipmcp-connectors/integrations/hubspot/).
+
+## Provenance and maintenance
+
+- https://api.hubspot.com/public/api/spec/v2/specs/release/75278/version/2026-03
+
+Maintainer:jannikco. MIT license for this code. See connector.json for selected operations and integration.json for evidence. Runtime dependencies retain their own licenses. Report sensitive issues through https://pipmcp.com/contact; do not post credentials or customer data in public issues.
